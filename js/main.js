@@ -1,4 +1,5 @@
 /*global THREE, requestAnimationFrame, console*/
+import Wire from "./wire.js";
 
 var camera, scene, renderer;
 
@@ -9,20 +10,11 @@ var wire, cube;
 
 
 function createWire(x, y, z) {
-    'use strict';
-
-    wire = new THREE.Object3D();
-
-    material = new THREE.MeshBasicMaterial({ color: 0xFA6C5B, wireframe: true });
-    geometry = new THREE.CylinderGeometry( 0.4, 0.4, 20, 5 );
-    mesh = new THREE.Mesh(geometry, material);
-
-
-    wire.add(mesh);
-    wire.position.set(x, y, z);
-
+    wire = new Wire(x,y,z);
     scene.add(wire);
 }
+
+
 
 function createCube(x,y,z) {
     'use strict';
@@ -50,7 +42,8 @@ function createScene() {
     scene.add(new THREE.AxisHelper(10));
 
     createWire(0, 40, 0);
-    //createCube(2,8,0);
+    scene.add(wire);                            
+    //createCube(0,-20,0);
     //wire.add(cube);
 }
 
@@ -92,7 +85,7 @@ function onKeyDown(e) {
         break;
     case 83:  //S
     case 115: //s
-        wire.position.x+=0.1;
+        wire.move();
         break;
     case 69:  //E
     case 101: //e
@@ -101,7 +94,9 @@ function onKeyDown(e) {
                 node.visible = !node.visible;
             }
         });
-        break;
+    break;
+    case 81: //q
+        wire.spinny();
     }
 }
 
@@ -130,8 +125,10 @@ function init() {
 function animate() {
     'use strict';
 
-    wire.rotateY(0.01);
     render();
 
     requestAnimationFrame(animate);
 }
+
+init();
+animate();
