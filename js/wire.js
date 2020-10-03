@@ -14,7 +14,7 @@ export default class Wire extends THREE.Object3D {
         
     }
     spinny() {
-        this.rotateY(0.02);
+        this.rotateY(0.1);
     }
     move() {
         this.position.x+=0.1;

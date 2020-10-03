@@ -40,11 +40,13 @@ function createScene() {
 
     scene.add(new THREE.AxisHelper(10));
 
-    createWire(0, 40, 0, 20, 0, 0, 0, scene);
-    //createWire(0, 30, 0, 10, Math.PI/2, 0, 0);
-    createCube(0,-20,0);
-    wires[0].createSon(cube);
-    wires[0].createSon(new Wire(0, 30, 0, 10, Math.PI/2, 0, 0, scene));
+    createWire(0, 45, 0, 15, 0, 0, 0, scene);
+    createWire(0, -7.5, 0, 20, Math.PI/2, 0, 0, scene);
+    createWire(0, -10, 5, 10, -Math.PI/2, 0, 0, scene)
+    //createCube(0,-20,0);
+    //wires[0].createSon(cube);
+    wires[0].createSon(wires[1]);
+    wires[1].createSon(wires[2]);
 }
 
 function createCamera() {
