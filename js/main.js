@@ -5,15 +5,14 @@ var camera, scene, renderer;
 
 var geometry, material, mesh;
 
-var wire, cube;
+var cube;
+var wires = new Array();
 
 
 
-function createWire(x, y, z) {
-    wire = new Wire(x,y,z);
-    scene.add(wire);
+function createWire(x, y, z, h, angleX, angleY, angleZ, scene) {
+    wires.push(new Wire(x,y,z, h, angleX, angleY, angleZ, scene));
 }
-
 
 
 function createCube(x,y,z) {
@@ -41,10 +40,11 @@ function createScene() {
 
     scene.add(new THREE.AxisHelper(10));
 
-    createWire(0, 40, 0);
-    scene.add(wire);                            
-    //createCube(0,-20,0);
-    //wire.add(cube);
+    createWire(0, 40, 0, 20, 0, 0, 0, scene);
+    //createWire(0, 30, 0, 10, Math.PI/2, 0, 0);
+    createCube(0,-20,0);
+    wires[0].createSon(cube);
+    wires[0].createSon(new Wire(0, 30, 0, 10, Math.PI/2, 0, 0, scene));
 }
 
 function createCamera() {
@@ -85,7 +85,7 @@ function onKeyDown(e) {
         break;
     case 83:  //S
     case 115: //s
-        wire.move();
+        wires[0].move();
         break;
     case 69:  //E
     case 101: //e
@@ -96,7 +96,7 @@ function onKeyDown(e) {
         });
     break;
     case 81: //q
-        wire.spinny();
+        wires[0].spinny();
     }
 }
 
