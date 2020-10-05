@@ -5,7 +5,7 @@ var camera, scene, renderer;
 
 var geometry, material, mesh;
 
-var cube;
+var cube, light;
 var wires = new Array();
 
 
@@ -21,7 +21,7 @@ function createCube(x,y,z) {
 
     cube = new THREE.Object3D();
 
-    material = new THREE.MeshBasicMaterial({map: loader.load('dragons2.jpg')})
+    material = new THREE.MeshLambertMaterial({color: 0xED5871});
     geometry = new THREE.CubeGeometry(5,5,5);
     mesh = new THREE.Mesh(geometry, material);
 
@@ -30,6 +30,13 @@ function createCube(x,y,z) {
     cube.position.set(x, y, z);
 
     scene.add(cube);
+}
+
+function createLight() {
+    'use strict';
+    light = new THREE.PointLight( 0xF4F8F1, 1, 100 )
+    light.position.set(20, 20, 20 );
+    scene.add( light );
 }
 
 function createScene() {
@@ -43,8 +50,9 @@ function createScene() {
     createWire(0, 45, 0, 15, 0, 0, 0, scene);
     createWire(0, -7.5, 0, 20, Math.PI/2, 0, 0, scene);
     createWire(0, -10, 5, 10, -Math.PI/2, 0, 0, scene)
-    //createCube(0,-20,0);
-    //wires[0].createSon(cube);
+    createCube(0,-20,0);
+    createLight();
+    wires[0].createSon(cube);
     wires[0].createSon(wires[1]);
     wires[1].createSon(wires[2]);
 }
