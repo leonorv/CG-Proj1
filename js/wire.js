@@ -1,4 +1,4 @@
-export default class Wire extends THREE.Object3D {
+ class Wire extends THREE.Object3D {
     constructor(x,y,z,h,angleX, angleY, angleZ, scene) {
         'use strict';
         super();

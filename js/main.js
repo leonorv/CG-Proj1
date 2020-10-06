@@ -1,5 +1,5 @@
 /*global THREE, requestAnimationFrame, console*/
-import Wire from "./wire.js";
+//import Wire from "./wire.js";
 
 var camera, scene, renderer;
 
@@ -46,21 +46,35 @@ function createScene() {
     scene.add(new THREE.AxisHelper(10));
 
     var light1 = new THREE.AmbientLight( 0x404040 ); // soft white light
-    scene.add( light1 );
+    scene.add(light1);
 
     createWire(0, 45, 0, 15, 0, 0, 0, scene);
     createWire(0, -7.5, 0, 20, Math.PI/2, 0, 0, scene);
-    createWire(0, -10, 5, 10, -Math.PI/2, 0, 0, scene)
-    createWire(0, -5, 0, 10, Math.PI/2, 0, 0, scene)
-    createWire(0, 10, 7.5, 15, Math.PI/2, 0, 0, scene) //5 with lamp
+    createWire(0, -10, 5, 10, -Math.PI/2, 0, 0, scene);
+    createWire(0, 10, 5, 10, -Math.PI/2, 0, 0, scene);
+    createWire(0, -5, 0, 10, Math.PI/2, 0, Math.PI/2, scene);
+    createWire(0, -5, 0, 10, Math.PI/2, 0, 0, scene);
+    createWire(0, -5, 2.5, 5, Math.PI/2, 0, 0, scene);
+    createWire(0, 5, 2.5, 5, Math.PI/2, 0, 0, scene);
+    createWire(0, 5, 2.5, 5, Math.PI/2, 0, 0, scene);
+    createWire(0, -5, 2.5, 5, Math.PI/2, 0, 0, scene);
 
-    var lamp = createLight();
-    wires[4].add(lamp);
+    var cube1 = createLight();
+    wires[8].add(cube1);
+
+    var cube2 = createLight();
+    wires[9].add(cube2);
 
     wires[0].add(wires[1]);
     wires[1].add(wires[2]);
-    wires[2].add(wires[3]);
-    wires[1].add(wires[4]);
+    wires[1].add(wires[3]);
+    wires[3].add(wires[4]);
+    wires[2].add(wires[5]);
+    wires[5].add(wires[6]);
+    wires[5].add(wires[7]);
+    wires[4].add(wires[8]);
+    wires[4].add(wires[9]);
+
 }
 
 function createCamera() {
@@ -155,5 +169,4 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-init();
-animate();
+
