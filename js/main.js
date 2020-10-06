@@ -7,6 +7,24 @@ var geometry, material, mesh;
 
 var cube, light;
 var wires = new Array();
+var SCREEN_WIDTH = window.innerWidth;
+var SCREEN_HEIGHT = window.innerHeight;
+var aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
+var cameraOrthoHelper;
+var cameraFront, cameraTop, cameraSide;
+var frustumSize = 150;
+
+var keys = {
+    81: false, //q
+    87: false, //w
+    65: false, //a
+    68: false, //d
+    49: false, //1
+    50: false, //2
+    51: false, //3
+    52: false, //4
+    69: false //e
+}
 
 
 
@@ -21,7 +39,7 @@ function createCube(x,y,z) {
 
     cube = new THREE.Object3D();
 
-    material = new THREE.MeshLambertMaterial({color: 0xED5871});
+    material = new THREE.MeshPhongMaterial({color: 0xEB5454});
     geometry = new THREE.CubeGeometry(5,5,5);
     mesh = new THREE.Mesh(geometry, material);
 
@@ -34,80 +52,102 @@ function createCube(x,y,z) {
 
 function createLight() {
     'use strict';
-    light = new THREE.PointLight( 0xF4F8F1, 1, 100 )
-    light.position.set(20, 20, 20 );
-    scene.add( light );
+    //var sphere = new THREE.SphereBufferGeometry( 0.5, 16, 8 );
+    var sphere = new THREE.CubeGeometry(5,5,5);
+    light = new THREE.PointLight( 0xCA1400, 2.5, 100, 2);
+    light.add( new THREE.Mesh( sphere, new THREE.MeshLambertMaterial( { color: 0xCA1400 , emissive: 0xCA1400, emissiveIntensity: 1.5} ) ) );
+    light.position.set(0,5,0);
+    scene.add( light ); 
+    return light;
+
 }
 
 function createScene() {
     'use strict';
 
     scene = new THREE.Scene();
-
-
     scene.add(new THREE.AxisHelper(10));
+
+    var light1 = new THREE.AmbientLight( 0x404040 ); // soft white light
+    scene.add( light1 );
+
 
     createWire(0, 45, 0, 15, 0, 0, 0, scene);
     createWire(0, -7.5, 0, 20, Math.PI/2, 0, 0, scene);
     createWire(0, -10, 5, 10, -Math.PI/2, 0, 0, scene)
-    createCube(0,-20,0);
-    createLight();
-    wires[0].createSon(cube);
-    wires[0].createSon(wires[1]);
-    wires[1].createSon(wires[2]);
+    createWire(0, -5, 0, 10, Math.PI/2, 0, 0, scene)
+    createWire(0, 10, 7.5, 15, Math.PI/2, 0, 0, scene) //5 with lamp
+
+    var lamp = createLight();
+    wires[4].add(lamp);
+
+    wires[0].add(wires[1]);
+    wires[1].add(wires[2]);
+    wires[2].add(wires[3]);
+    wires[1].add(wires[4]);
 }
 
 function createCamera() {
     'use strict';
-    camera = new THREE.PerspectiveCamera(70,
-                                         window.innerWidth / window.innerHeight,
-                                         1,
-                                         1000);
-    camera.position.x = 50;
-    camera.position.y = 50;
-    camera.position.z = 50;
-    camera.lookAt(scene.position);
+    cameraFront = new THREE.OrthographicCamera( 0.5 * frustumSize * aspect / - 2, 0.5 * frustumSize * aspect / 2, 0.5* frustumSize / 2, 0.5 * frustumSize / - 2, 2, 2000 );
+    cameraFront.position.set(0,20,20);
+    scene.add(cameraFront);
+
+    cameraTop = new THREE.OrthographicCamera( 0.5 * frustumSize * aspect / - 2, 0.5 * frustumSize * aspect / 2, 0.5* frustumSize / 2, 0.5 * frustumSize / - 2, 2, 2000 );
+    cameraTop.position.set(0,frustumSize,0);
+    cameraTop.lookAt(scene.position);
+    scene.add(cameraTop);
+
+    camera = cameraTop;
+
+    cameraOrthoHelper = new THREE.CameraHelper(camera);
+    cameraOrthoHelper.visible = true;
+    //scene.add( cameraOrthoHelper );
 }
 
 function onResize() {
     'use strict';
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    //renderer.setSize(window.innerWidth, window.innerHeight);
 
-    if (window.innerHeight > 0 && window.innerWidth > 0) {
+    /*if (window.innerHeight > 0 && window.innerWidth > 0) {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
-    }
+    }*/
+    SCREEN_WIDTH = window.innerWidth;
+	SCREEN_HEIGHT = window.innerHeight;
+    aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
+
+    renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+
+    cameraFront.left = - 0.5 * frustumSize * aspect / 2;
+    cameraFront.right = 0.5 * frustumSize * aspect / 2;
+    cameraFront.top = 0.5 * frustumSize / 2;
+    cameraFront.bottom = -0.5*  frustumSize / 2;
+    cameraFront.updateProjectionMatrix();
 
 }
 
 function onKeyDown(e) {
     'use strict';
-
-    switch (e.keyCode) {
-    case 65: //A
-    case 97: //a
-        scene.traverse(function (node) {
-            if (node instanceof THREE.Mesh) {
-                node.material.wireframe = !node.material.wireframe;
-            }
-        });
-        break;
-    case 83:  //S
-    case 115: //s
-        wires[0].move();
-        break;
-    case 69:  //E
-    case 101: //e
+    keys[e.keyCode] = true;
+    if (keys[81]) wires[0].spinLeft(); //q - move 1st branch left
+    else if (keys[87]) wires[0].spinRight(); //w - move 1st branch
+    if (keys[65]) wires[2].spinLeft(); //a - move 2nd branch
+    else if (keys[68]) wires[2].spinRight(); //d - move 2nd branch
+    if (keys[49]) camera = cameraFront; //1 - front view
+    if (keys[50]) camera = cameraTop; //2 - top view
+    if (keys[69]) { //e - remove axis just for help
         scene.traverse(function (node) {
             if (node instanceof THREE.AxisHelper) {
                 node.visible = !node.visible;
             }
         });
-    break;
-    case 81: //q
-        wires[0].spinny();
     }
+}
+
+function onKeyUp(e) {
+    keys[e.keyCode] = false;
 }
 
 function render() {
@@ -120,6 +160,8 @@ function init() {
     renderer = new THREE.WebGLRenderer({
         antialias: true
     });
+
+
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
@@ -129,6 +171,7 @@ function init() {
     render();
 
     window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
     window.addEventListener("resize", onResize);
 }
 
