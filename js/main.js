@@ -3,9 +3,7 @@ import Wire from "./wire.js";
 
 var camera, scene, renderer;
 
-var geometry, material, mesh;
-
-var cube, light;
+var light;
 var wires = new Array();
 var SCREEN_WIDTH = window.innerWidth;
 var SCREEN_HEIGHT = window.innerHeight;
@@ -26,38 +24,17 @@ var keys = {
     69: false //e
 }
 
-
-
 function createWire(x, y, z, h, angleX, angleY, angleZ, scene) {
     wires.push(new Wire(x,y,z, h, angleX, angleY, angleZ, scene));
 }
 
-
-function createCube(x,y,z) {
-    'use strict';
-    const loader = new THREE.TextureLoader();
-
-    cube = new THREE.Object3D();
-
-    material = new THREE.MeshPhongMaterial({color: 0xEB5454});
-    geometry = new THREE.CubeGeometry(5,5,5);
-    mesh = new THREE.Mesh(geometry, material);
-
-
-    cube.add(mesh);
-    cube.position.set(x, y, z);
-
-    scene.add(cube);
-}
-
 function createLight() {
     'use strict';
-    //var sphere = new THREE.SphereBufferGeometry( 0.5, 16, 8 );
-    var sphere = new THREE.CubeGeometry(5,5,5);
+    var lamp = new THREE.CubeGeometry(5,5,5);
     light = new THREE.PointLight( 0xCA1400, 2.5, 100, 2);
-    light.add( new THREE.Mesh( sphere, new THREE.MeshLambertMaterial( { color: 0xCA1400 , emissive: 0xCA1400, emissiveIntensity: 1.5} ) ) );
+    light.add( new THREE.Mesh(lamp, new THREE.MeshLambertMaterial( { color: 0xCA1400 , emissive: 0xCA1400, emissiveIntensity: 1.5} ) ) );
     light.position.set(0,5,0);
-    scene.add( light ); 
+    scene.add(light); 
     return light;
 
 }
@@ -70,7 +47,6 @@ function createScene() {
 
     var light1 = new THREE.AmbientLight( 0x404040 ); // soft white light
     scene.add( light1 );
-
 
     createWire(0, 45, 0, 15, 0, 0, 0, scene);
     createWire(0, -7.5, 0, 20, Math.PI/2, 0, 0, scene);
@@ -89,10 +65,12 @@ function createScene() {
 
 function createCamera() {
     'use strict';
+    /*FRONT CAMERA*/
     cameraFront = new THREE.OrthographicCamera( 0.5 * frustumSize * aspect / - 2, 0.5 * frustumSize * aspect / 2, 0.5* frustumSize / 2, 0.5 * frustumSize / - 2, 2, 2000 );
     cameraFront.position.set(0,20,20);
     scene.add(cameraFront);
 
+    /*TOP CAMERA*/
     cameraTop = new THREE.OrthographicCamera( 0.5 * frustumSize * aspect / - 2, 0.5 * frustumSize * aspect / 2, 0.5* frustumSize / 2, 0.5 * frustumSize / - 2, 2, 2000 );
     cameraTop.position.set(0,frustumSize,0);
     cameraTop.lookAt(scene.position);
@@ -108,23 +86,17 @@ function createCamera() {
 function onResize() {
     'use strict';
 
-    //renderer.setSize(window.innerWidth, window.innerHeight);
-
-    /*if (window.innerHeight > 0 && window.innerWidth > 0) {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-    }*/
     SCREEN_WIDTH = window.innerWidth;
 	SCREEN_HEIGHT = window.innerHeight;
     aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
 
     renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
 
-    cameraFront.left = - 0.5 * frustumSize * aspect / 2;
-    cameraFront.right = 0.5 * frustumSize * aspect / 2;
-    cameraFront.top = 0.5 * frustumSize / 2;
-    cameraFront.bottom = -0.5*  frustumSize / 2;
-    cameraFront.updateProjectionMatrix();
+    camera.left = - 0.5 * frustumSize * aspect / 2;
+    camera.right = 0.5 * frustumSize * aspect / 2;
+    camera.top = 0.5 * frustumSize / 2;
+    camera.bottom = -0.5*  frustumSize / 2;
+    camera.updateProjectionMatrix();
 
 }
 
