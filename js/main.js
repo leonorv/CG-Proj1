@@ -28,12 +28,12 @@ function createWire(x, y, z, h, angleX, angleY, angleZ, scene) {
     wires.push(new Wire(x,y,z, h, angleX, angleY, angleZ, scene));
 }
 
-function createLight() {
+function createLight(y) {
     'use strict';
     var lamp = new THREE.CubeGeometry(5,5,5);
     light = new THREE.PointLight( 0xCA1400, 2.5, 100, 2);
     light.add( new THREE.Mesh(lamp, new THREE.MeshLambertMaterial( { color: 0xCA1400 , emissive: 0xCA1400, emissiveIntensity: 1.5} ) ) );
-    light.position.set(0,5,0);
+    light.position.set(0,-y,0);
     scene.add(light); 
     return light;
 
@@ -52,28 +52,41 @@ function createScene() {
     createWire(0, -7.5, 0, 20, Math.PI/2, 0, 0, scene);
     createWire(0, -10, 5, 10, -Math.PI/2, 0, 0, scene);
     createWire(0, 10, 5, 10, -Math.PI/2, 0, 0, scene);
-    createWire(0, -5, 0, 10, Math.PI/2, 0, Math.PI/2, scene);
-    createWire(0, -5, 0, 10, Math.PI/2, 0, 0, scene);
-    createWire(0, -5, 2.5, 5, Math.PI/2, 0, 0, scene);
-    createWire(0, 5, 2.5, 5, Math.PI/2, 0, 0, scene);
-    createWire(0, 5, 2.5, 5, Math.PI/2, 0, 0, scene);
-    createWire(0, -5, 2.5, 5, Math.PI/2, 0, 0, scene);
+    createWire(0, -5, 0, 20, Math.PI/2, 0, Math.PI/2, scene);
+    createWire(0, 10, 5, 10, -Math.PI/2, 0, 0, scene);
+    createWire(0, 0, 10, 30, -Math.PI/2, 0, 0, scene);
+    createWire(0, -10, 5, 10, -Math.PI/2, 0, 0, scene)
+    createWire(0, -5, 0, 10, Math.PI/2, 0, 0, scene)
+    createWire(0, -5, 2.5, 5, -Math.PI/2, 0, 0, scene)
+    createWire(0, 5, 2.5, 5, -Math.PI/2, 0, 0, scene)
 
-    var cube1 = createLight();
-    wires[8].add(cube1);
+    var cube1 = createLight(5);
+    wires[2].add(cube1);
 
-    var cube2 = createLight();
-    wires[9].add(cube2);
+    var cube2 = createLight(5);
+    wires[5].add(cube2);
+
+    var cube3 = createLight(15);
+    wires[6].add(cube3);
+
+    var cube4 = createLight(5);
+    wires[9].add(cube4);
 
     wires[0].add(wires[1]);
     wires[1].add(wires[2]);
     wires[1].add(wires[3]);
     wires[3].add(wires[4]);
-    wires[2].add(wires[5]);
-    wires[5].add(wires[6]);
-    wires[5].add(wires[7]);
-    wires[4].add(wires[8]);
-    wires[4].add(wires[9]);
+    wires[4].add(wires[5]);
+    wires[4].add(wires[6]);
+    wires[4].add(wires[7]);
+    wires[7].add(wires[8]);
+    wires[8].add(wires[9]);
+    wires[8].add(wires[10]);
+    //wires[2].add(wires[5]);
+    //wires[5].add(wires[6]);
+    //wires[5].add(wires[7]);
+    //wires[4].add(wires[8]);
+    //wires[4].add(wires[9]);
 
 }
 
@@ -119,8 +132,8 @@ function onKeyDown(e) {
     keys[e.keyCode] = true;
     if (keys[81]) wires[0].spinLeft(); //q - move 1st branch left
     else if (keys[87]) wires[0].spinRight(); //w - move 1st branch
-    if (keys[65]) wires[2].spinLeft(); //a - move 2nd branch
-    else if (keys[68]) wires[2].spinRight(); //d - move 2nd branch
+    if (keys[65]) wires[3].spinLeft(); //a - move 2nd branch
+    else if (keys[68]) wires[3].spinRight(); //d - move 2nd branch
     if (keys[49]) camera = cameraFront; //1 - front view
     if (keys[50]) camera = cameraTop; //2 - top view
     if (keys[69]) { //e - remove axis just for help
