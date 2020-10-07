@@ -1,7 +1,9 @@
- class Wire extends THREE.Object3D {
+class Wire extends THREE.Object3D {
     constructor(x,y,z,h,angleX, angleY, angleZ, scene) {
         'use strict';
         super();
+
+        this.sons = new Array();
         this.material = new THREE.MeshPhongMaterial({ color: 0xB5B5B0});
         this.geometry = new THREE.CylinderGeometry( 0.4, 0.4, h, 5);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -11,18 +13,26 @@
         this.rotateY(angleY);
         this.rotateZ(angleZ);
         scene.add(this);
-        
     }
-    
-    spinLeft() {
-        this.rotateY(0.1);
+}
+
+class Group extends THREE.Object3D {
+    constructor() {
+        'use strict';
+        super();
+
+        this.wires = new Array();
     }
 
-    spinRight() {
-        this.rotateY(-0.1);
+    addWire(wire) {
+        this.wires.push(wire);
     }
 
-    move() {
-        this.position.x+=0.1;
+    addDependencies(dependencies) {
+
+        dependencies.forEach(dep => 
+            this.wires[dep[0]].add(this.wires[dep[1]]));
+
     }
+
 }

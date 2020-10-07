@@ -1,16 +1,15 @@
 /*global THREE, requestAnimationFrame, console*/
-//import Wire from "./wire.js";
-
 var camera, scene, renderer;
 
 var light;
-var wires = new Array();
 var SCREEN_WIDTH = window.innerWidth;
 var SCREEN_HEIGHT = window.innerHeight;
 var aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
 var cameraOrthoHelper;
 var cameraFront, cameraTop, cameraSide;
 var frustumSize = 150;
+var un = 5;
+var mobile, father, son, grandson;
 
 var keys = {
     81: false, //q
@@ -48,40 +47,52 @@ function createScene() {
     var light1 = new THREE.AmbientLight( 0x404040 ); // soft white light
     scene.add(light1);
 
-    createWire(0, 45, 0, 15, 0, 0, 0, scene);
-    createWire(0, -7.5, 0, 20, Math.PI/2, 0, 0, scene);
-    createWire(0, -10, 5, 10, -Math.PI/2, 0, 0, scene);
-    createWire(0, 10, 5, 10, -Math.PI/2, 0, 0, scene);
-    createWire(0, -5, 0, 20, Math.PI/2, 0, Math.PI/2, scene);
-    createWire(0, 10, 5, 10, -Math.PI/2, 0, 0, scene);
-    createWire(0, 0, 10, 30, -Math.PI/2, 0, 0, scene);
-    createWire(0, -10, 5, 10, -Math.PI/2, 0, 0, scene)
-    createWire(0, -5, 0, 10, Math.PI/2, 0, 0, scene)
-    createWire(0, -5, 2.5, 5, -Math.PI/2, 0, 0, scene)
-    createWire(0, 5, 2.5, 5, -Math.PI/2, 0, 0, scene)
+    mobile = new Mobile();
+    father = new Group();
+    son = new Group();
+    grandson = new Group();
+
+    father.addWire(new Wire(0, 45, 0, 15, 0, 0, 0, scene));
+    father.addWire(new Wire(0, -7.5, 0, 20, Math.PI/2, 0, 0, scene));
+    father.addWire(new Wire(0, -10, 5, 10, -Math.PI/2, 0, 0, scene));
+    father.addDependencies([(0,1), (1,2)]);
+
+    son.addWire(new Wire(0, 10, 5, 10, -Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, -5, 0, 20, Math.PI/2, 0, Math.PI/2, scene));
+    son.addWire(new Wire(0, 10, 5, 10, -Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, 0, 10, 30, -Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, -10, 5, 10, -Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, -5, 0, 10, Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, -5, 2.5, 5, -Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, 5, 2.5, 5, -Math.PI/2, 0, 0, scene));
+    son.addDependencies([(0,1), (1, 2), (1, 3), (1,4), (4,5), (5,6), (5,7)]);
 
     var cube1 = createLight(5);
-    wires[2].add(cube1);
+    father.wires[2].add(cube1);
 
     var cube2 = createLight(5);
-    wires[5].add(cube2);
+    son.wires[2].add(cube2);
 
     var cube3 = createLight(15);
-    wires[6].add(cube3);
+    son.wires[3].add(cube3);
 
     var cube4 = createLight(5);
-    wires[9].add(cube4);
+    son.wires[6].add(cube4);
 
-    wires[0].add(wires[1]);
-    wires[1].add(wires[2]);
-    wires[1].add(wires[3]);
-    wires[3].add(wires[4]);
-    wires[4].add(wires[5]);
-    wires[4].add(wires[6]);
-    wires[4].add(wires[7]);
-    wires[7].add(wires[8]);
-    wires[8].add(wires[9]);
-    wires[8].add(wires[10]);
+    mobile.add(father);
+    mobile.add(son);
+    scene.add(mobile);
+
+    //wires[0].add(wires[1]);
+    //wires[1].add(wires[2]);
+    //wires[1].add(wires[3]);
+    //wires[3].add(wires[4]);
+    //wires[4].add(wires[5]);
+    //wires[4].add(wires[6]);
+    //wires[4].add(wires[7]);
+    //wires[7].add(wires[8]);
+    //wires[8].add(wires[9]);
+    //wires[8].add(wires[10]);
     //wires[2].add(wires[5]);
     //wires[5].add(wires[6]);
     //wires[5].add(wires[7]);
