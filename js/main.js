@@ -16,6 +16,8 @@ var keys = {
     87: false, //w
     65: false, //a
     68: false, //d
+    90: false, //z
+    67: false, //c
     49: false, //1
     50: false, //2
     51: false, //3
@@ -50,50 +52,51 @@ function createScene() {
     father.addWire(new Wire(0, 10*un, 0, 3*un, 0, 0, 0, scene));
     father.addWire(new Wire(0, -3*un/2, 0, 4*un, Math.PI/2, 0, 0, scene));
     father.addWire(new Wire(0, -2*un, un, 2*un, -Math.PI/2, 0, 0, scene));
-    father.addDependencies([[0,1],[1,2]]);
+    father.addWire(new Wire(0, -un, 0, 2*un, -Math.PI/2, 0, Math.PI/2, scene));
+    father.addWire(new Wire(0, -un, -un/2, un, -Math.PI/2, 0, 0, scene));
+    father.addWire(new Wire(0, un, -un/2, un, -Math.PI/2, 0, 0, scene));
+
+    father.addDependencies([[0,1],[1,2], [2,3], [3,4], [3,5]]);
+    mobile.addGroup(father);
 
     son.addWire(new Wire(0, 2*un, un, 2*un, -Math.PI/2, 0, 0, scene));
     son.addWire(new Wire(0, -un, 0, 4*un, Math.PI/2, 0, Math.PI/2, scene));
     son.addWire(new Wire(0, 2*un, un, 2*un, -Math.PI/2, 0, 0, scene));
     son.addWire(new Wire(0, 0, 2*un, 6*un, -Math.PI/2, 0, 0, scene));
-    son.addWire(new Wire(0, -2*un, un, 2*un, -Math.PI/2, 0, 0, scene));
-    son.addWire(new Wire(0, -un, 0, 2*un, Math.PI/2, 0, 0, scene));
-    son.addWire(new Wire(0, -un, un/2, un, -Math.PI/2, 0, 0, scene));
-    son.addWire(new Wire(0, un, un/2, un, -Math.PI/2, 0, 0, scene));
-    son.addDependencies([[0,1],[1,2],[1,3],[1,4],[4,5],[5,6],[5,7]]);
-
-    var cube1 = createLight(5);
-    father.wires[2].add(cube1);
-
-    var cube2 = createLight(5);
-    son.wires[2].add(cube2);
-
-    var cube3 = createLight(15);
-    son.wires[3].add(cube3);
-
-    var cube4 = createLight(5);
-    son.wires[6].add(cube4);
-
-    mobile.addGroup(father);
+    son.addDependencies([[0,1],[1,2],[1,3]]);
     mobile.addGroup(son);
+
     mobile.groups[0].wires[1].add(mobile.groups[1].wires[0]);
 
-    //wires[0].add(wires[1]);
-    //wires[1].add(wires[2]);
-    //wires[1].add(wires[3]);
-    //wires[3].add(wires[4]);
-    //wires[4].add(wires[5]);
-    //wires[4].add(wires[6]);
-    //wires[4].add(wires[7]);
-    //wires[7].add(wires[8]);
-    //wires[8].add(wires[9]);
-    //wires[8].add(wires[10]);
-    //wires[2].add(wires[5]);
-    //wires[5].add(wires[6]);
-    //wires[5].add(wires[7]);
-    //wires[4].add(wires[8]);
-    //wires[4].add(wires[9]);
 
+    grandson.addWire(new Wire(0, -2*un, un, 2*un, Math.PI/2, 0, 0, scene));
+    grandson.addWire(new Wire(0, un, 0, un, -Math.PI/2, 0, 0, scene));
+    grandson.addWire(new Wire(0, -un/2, un/2, un, -Math.PI/2, 0, 0, scene));
+    grandson.addWire(new Wire(0, un/2, un/2, un, -Math.PI/2, 0, 0, scene));
+    grandson.addDependencies([[0,1], [1,2], [1,3]]);
+
+    mobile.addGroup(grandson);
+    mobile.groups[1].wires[1].add(mobile.groups[2].wires[0]);
+
+    //LAMPS
+
+    var cube1 = createLight(-un);
+    father.wires[4].add(cube1);
+
+    var cube2 = createLight(-un);
+    father.wires[5].add(cube2);
+
+    var cube3 = createLight(un);
+    son.wires[2].add(cube3);
+
+    var cube4 = createLight(3*un);
+    son.wires[3].add(cube4);
+
+    var cube5 = createLight(un);
+    grandson.wires[2].add(cube5);
+
+    var cube6 = createLight(un);
+    grandson.wires[3].add(cube6);
 }
 
 function createCamera() {
@@ -109,7 +112,13 @@ function createCamera() {
     cameraTop.lookAt(scene.position);
     scene.add(cameraTop);
 
-    camera = cameraTop;
+    /*SIDE CAMERA*/
+    cameraSide = new THREE.OrthographicCamera( 0.5 * frustumSize * aspect / - 2, 0.5 * frustumSize * aspect / 2, 0.5* frustumSize / 2, 0.5 * frustumSize / - 2, 2, 2000 );
+    cameraSide.position.set(frustumSize,-frustumSize,frustumSize);
+    cameraSide.lookAt(scene.position);
+    scene.add(cameraSide);
+
+    camera = cameraFront;
 
     cameraOrthoHelper = new THREE.CameraHelper(camera);
     cameraOrthoHelper.visible = true;
@@ -140,8 +149,11 @@ function onKeyDown(e) {
     else if (keys[87]) mobile.groups[0].spinRight();    //w - move 1st branch
     if (keys[65]) mobile.groups[1].spinLeft();          //a - move 2nd branch
     else if (keys[68]) mobile.groups[1].spinRight();    //d - move 2nd branch
+    if (keys[90]) mobile.groups[2].spinLeft();          //z - move 3rd branch
+    else if(keys[67]) mobile.groups[2].spinRight();     //c - move 3rd branch
     if (keys[49]) camera = cameraFront;                 //1 - front view
     if (keys[50]) camera = cameraTop;                   //2 - top view
+    if (keys[51]) camera = cameraSide;
     if (keys[69]) {                                     //e - remove axis just for help
         scene.traverse(function (node) {
             if (node instanceof THREE.AxisHelper) {
