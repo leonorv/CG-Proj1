@@ -23,19 +23,14 @@ var keys = {
     69: false //e
 }
 
-function createWire(x, y, z, h, angleX, angleY, angleZ, scene) {
-    wires.push(new Wire(x,y,z, h, angleX, angleY, angleZ, scene));
-}
-
 function createLight(y) {
     'use strict';
     var lamp = new THREE.CubeGeometry(5,5,5);
     light = new THREE.PointLight( 0xCA1400, 2.5, 100, 2);
-    light.add( new THREE.Mesh(lamp, new THREE.MeshLambertMaterial( { color: 0xCA1400 , emissive: 0xCA1400, emissiveIntensity: 1.5} ) ) );
+    light.add(new THREE.Mesh(lamp, new THREE.MeshLambertMaterial( {color: 0xCA1400 , emissive: 0xCA1400, emissiveIntensity: 1.5})));
     light.position.set(0,-y,0);
     scene.add(light); 
     return light;
-
 }
 
 function createScene() {
@@ -52,20 +47,20 @@ function createScene() {
     son = new Group();
     grandson = new Group();
 
-    father.addWire(new Wire(0, 45, 0, 15, 0, 0, 0, scene));
-    father.addWire(new Wire(0, -7.5, 0, 20, Math.PI/2, 0, 0, scene));
-    father.addWire(new Wire(0, -10, 5, 10, -Math.PI/2, 0, 0, scene));
-    father.addDependencies([(0,1), (1,2)]);
+    father.addWire(new Wire(0, 10*un, 0, 3*un, 0, 0, 0, scene));
+    father.addWire(new Wire(0, -3*un/2, 0, 4*un, Math.PI/2, 0, 0, scene));
+    father.addWire(new Wire(0, -2*un, un, 2*un, -Math.PI/2, 0, 0, scene));
+    father.addDependencies([[0,1],[1,2]]);
 
-    son.addWire(new Wire(0, 10, 5, 10, -Math.PI/2, 0, 0, scene));
-    son.addWire(new Wire(0, -5, 0, 20, Math.PI/2, 0, Math.PI/2, scene));
-    son.addWire(new Wire(0, 10, 5, 10, -Math.PI/2, 0, 0, scene));
-    son.addWire(new Wire(0, 0, 10, 30, -Math.PI/2, 0, 0, scene));
-    son.addWire(new Wire(0, -10, 5, 10, -Math.PI/2, 0, 0, scene));
-    son.addWire(new Wire(0, -5, 0, 10, Math.PI/2, 0, 0, scene));
-    son.addWire(new Wire(0, -5, 2.5, 5, -Math.PI/2, 0, 0, scene));
-    son.addWire(new Wire(0, 5, 2.5, 5, -Math.PI/2, 0, 0, scene));
-    son.addDependencies([(0,1), (1, 2), (1, 3), (1,4), (4,5), (5,6), (5,7)]);
+    son.addWire(new Wire(0, 2*un, un, 2*un, -Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, -un, 0, 4*un, Math.PI/2, 0, Math.PI/2, scene));
+    son.addWire(new Wire(0, 2*un, un, 2*un, -Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, 0, 2*un, 6*un, -Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, -2*un, un, 2*un, -Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, -un, 0, 2*un, Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, -un, un/2, un, -Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, un, un/2, un, -Math.PI/2, 0, 0, scene));
+    son.addDependencies([[0,1],[1,2],[1,3],[1,4],[4,5],[5,6],[5,7]]);
 
     var cube1 = createLight(5);
     father.wires[2].add(cube1);
@@ -79,9 +74,9 @@ function createScene() {
     var cube4 = createLight(5);
     son.wires[6].add(cube4);
 
-    mobile.add(father);
-    mobile.add(son);
-    scene.add(mobile);
+    mobile.addGroup(father);
+    mobile.addGroup(son);
+    mobile.groups[0].wires[1].add(mobile.groups[1].wires[0]);
 
     //wires[0].add(wires[1]);
     //wires[1].add(wires[2]);
@@ -141,13 +136,13 @@ function onResize() {
 function onKeyDown(e) {
     'use strict';
     keys[e.keyCode] = true;
-    if (keys[81]) wires[0].spinLeft(); //q - move 1st branch left
-    else if (keys[87]) wires[0].spinRight(); //w - move 1st branch
-    if (keys[65]) wires[3].spinLeft(); //a - move 2nd branch
-    else if (keys[68]) wires[3].spinRight(); //d - move 2nd branch
-    if (keys[49]) camera = cameraFront; //1 - front view
-    if (keys[50]) camera = cameraTop; //2 - top view
-    if (keys[69]) { //e - remove axis just for help
+    if (keys[81]) mobile.groups[0].spinLeft();          //q - move 1st branch left
+    else if (keys[87]) mobile.groups[0].spinRight();    //w - move 1st branch
+    if (keys[65]) mobile.groups[1].spinLeft();          //a - move 2nd branch
+    else if (keys[68]) mobile.groups[1].spinRight();    //d - move 2nd branch
+    if (keys[49]) camera = cameraFront;                 //1 - front view
+    if (keys[50]) camera = cameraTop;                   //2 - top view
+    if (keys[69]) {                                     //e - remove axis just for help
         scene.traverse(function (node) {
             if (node instanceof THREE.AxisHelper) {
                 node.visible = !node.visible;
