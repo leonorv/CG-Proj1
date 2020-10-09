@@ -67,7 +67,9 @@ function createScene() {
     son.addWire(new Wire(0, 3*un, un, 2*un, -Math.PI/2, 0, 0, scene));
     son.addWire(new Wire(0, 0, 3*un, 6*un, -Math.PI/2, 0, 0, scene));
     son.addWire(new Wire(0, -3*un, un, 2*un, Math.PI/2, 0, 0, scene));
-    son.addDependencies([[0,1],[1,2],[1,3], [1,4]]);
+    son.addWire(new Wire(-un, -un, 0, 2*un, 0, 0, Math.PI/2, scene));
+    son.addWire(new Wire(0, (3+Math.sqrt(2)/4)*un,-(Math.sqrt(2)/4)*un , un, -Math.PI/4,0, 0, scene));
+    son.addDependencies([[0,1],[1,2],[1,3], [1,4],[0,5],[1,6]]);
     
     mobile.addGroup(son);
     mobile.groups[0].wires[1].add(mobile.groups[1].wires[0]);
@@ -76,7 +78,8 @@ function createScene() {
     grandson.addWire(new Wire(0, un, 0, 3*un, -Math.PI/2, 0, 0, scene));
     grandson.addWire(new Wire(0, -3/2*un, un/2, un, -Math.PI/2, 0, 0, scene));
     grandson.addWire(new Wire(0, 3/2*un, un/2, un, -Math.PI/2, 0, 0, scene));
-    grandson.addDependencies([[0,1], [1,2], [1,3]]);
+    grandson.addWire(new Wire(un, un, 0, un, 0, 0, -Math.PI/2, scene));
+    grandson.addDependencies([[0,1], [1,2], [1,3],[0,4]]);
 
     mobile.addGroup(grandson);
     mobile.groups[1].wires[1].add(mobile.groups[2].wires[0]);
@@ -109,6 +112,15 @@ function createScene() {
 
     var solid9 = new Solid(new THREE.CubeGeometry(8, 8, 8), un);
     grandson.wires[3].add(solid9);
+
+    var solid10 = new Solid(new THREE.CylinderGeometry(3, 3, 7, 30), -un);
+    grandson.wires[4].add(solid10);
+
+    var solid11 = new Solid(new THREE.CylinderGeometry(3, 3, 7, 30), -un);
+    son.wires[5].add(solid11);
+
+    var solid12 = new Solid(new THREE.CylinderGeometry(3, 3, 7, 30), -un);
+    son.wires[6].add(solid12);
 }
 
 function createCamera() {
@@ -157,12 +169,12 @@ function onResize() {
 function onKeyDown(e) {
     'use strict';
     keys[e.keyCode] = true;
-    if (keys[81]) mobile.groups[0].spinLeft();          //q - move 1st branch left
-    else if (keys[87]) mobile.groups[0].spinRight();    //w - move 1st branch
-    if (keys[65]) mobile.groups[1].spinLeft();          //a - move 2nd branch
-    else if (keys[68]) mobile.groups[1].spinRight();    //d - move 2nd branch
-    if (keys[90]) mobile.groups[2].spinLeft();          //z - move 3rd branch
-    else if(keys[67]) mobile.groups[2].spinRight();     //c - move 3rd branch
+    if (keys[81]) mobile.groups[0].spinLeft();          //q - spin 1st branch left
+    else if (keys[87]) mobile.groups[0].spinRight();    //w - spin 1st branch right
+    if (keys[65]) mobile.groups[1].spinLeft();          //a - spin 2nd branch left
+    else if (keys[68]) mobile.groups[1].spinRight();    //d - spin 2nd branch right
+    if (keys[90]) mobile.groups[2].spinLeft();          //z - spin 3rd branch left
+    else if(keys[67]) mobile.groups[2].spinRight();     //c - spin 3rd branch right
     if (keys[49]) camera = cameraFront;                 //1 - front view
     if (keys[50]) camera = cameraTop;                   //2 - top view
     if (keys[51]) camera = cameraSide;
