@@ -29,7 +29,6 @@ class Solid extends THREE.Object3D {
 class Group {
     constructor() {
         'use strict';
-        
         this.wires = new Array();
     }
 
@@ -43,7 +42,7 @@ class Group {
     }
 
     spinLeft() {
-        this.wires[0].rotateY(0.1);
+        this.wires[0].rotation.y -= 50*delta*(Math.PI / 180);
     }
 
     spinRight() {

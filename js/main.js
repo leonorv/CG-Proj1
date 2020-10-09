@@ -1,7 +1,7 @@
 /*global THREE, requestAnimationFrame, console*/
 var camera, scene, renderer;
 
-var light;
+var light, clock, delta;
 var SCREEN_WIDTH = window.innerWidth;
 var SCREEN_HEIGHT = window.innerHeight;
 var aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
@@ -78,7 +78,7 @@ function createScene() {
     grandson.addWire(new Wire(0, un, 0, 3*un, -Math.PI/2, 0, 0, scene));
     grandson.addWire(new Wire(0, -3/2*un, un/2, un, -Math.PI/2, 0, 0, scene));
     grandson.addWire(new Wire(0, 3/2*un, un/2, un, -Math.PI/2, 0, 0, scene));
-    grandson.addWire(new Wire(un, un, 0, un, 0, 0, -Math.PI/2, scene));
+    grandson.addWire(new Wire(un/2, un, 0, un, 0, 0, -Math.PI/2, scene));
     grandson.addDependencies([[0,1], [1,2], [1,3],[0,4]]);
 
     mobile.addGroup(grandson);
@@ -161,7 +161,7 @@ function onResize() {
     camera.left = - 0.5 * frustumSize * aspect / 2;
     camera.right = 0.5 * frustumSize * aspect / 2;
     camera.top = 0.5 * frustumSize / 2;
-    camera.bottom = -0.5*  frustumSize / 2;
+    camera.bottom = - 0.5 *  frustumSize / 2;
     camera.updateProjectionMatrix();
 
 }
@@ -169,30 +169,44 @@ function onResize() {
 function onKeyDown(e) {
     'use strict';
     keys[e.keyCode] = true;
-    if (keys[81]) mobile.groups[0].spinLeft();          //q - spin 1st branch left
-    else if (keys[87]) mobile.groups[0].spinRight();    //w - spin 1st branch right
-    if (keys[65]) mobile.groups[1].spinLeft();          //a - spin 2nd branch left
-    else if (keys[68]) mobile.groups[1].spinRight();    //d - spin 2nd branch right
-    if (keys[90]) mobile.groups[2].spinLeft();          //z - spin 3rd branch left
-    else if(keys[67]) mobile.groups[2].spinRight();     //c - spin 3rd branch right
-    if (keys[49]) camera = cameraFront;                 //1 - front view
-    if (keys[50]) camera = cameraTop;                   //2 - top view
-    if (keys[51]) camera = cameraSide;
-    if (keys[69]) {                                     //e - remove axis just for help
-        scene.traverse(function (node) {
-            if (node instanceof THREE.AxisHelper) {
-                node.visible = !node.visible;
-            }
-        });
+
+    switch(e.keyCode) {
+        case 49:
+            camera = cameraFront;                 //1 - front view
+            onResize();
+            break;
+        case 50:
+            camera = cameraTop;
+            onResize();
+            break;
+        case 51:
+            camera = cameraSide;
+            onResize();
+            break;
+        case 69:
+            scene.traverse(function (node) {
+                if (node instanceof THREE.AxisHelper)
+                    node.visible = !node.visible;
+            })
+            break;
+        case 37:
+        case 38:
+        case 39:
+        case 40:
+
     }
 }
 
 function onKeyUp(e) {
+    'use strict';
     keys[e.keyCode] = false;
 }
 
 function render() {
     'use strict';
+
+    delta = clock.getDelta();
+    keyPressed(delta);
     renderer.render(scene, camera);
 }
 
@@ -205,6 +219,9 @@ function init() {
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
+
+    clock = new THREE.Clock();
+    clock.start();
 
     createScene();
     createCamera();
@@ -222,6 +239,16 @@ function animate() {
     render();
 
     requestAnimationFrame(animate);
+}
+
+function keyPressed(delta) {
+
+    if(keys[81]) mobile.groups[0].spinLeft(delta);
+    if(keys[87]) mobile.groups[0].spinRight(delta);
+    if(keys[65]) mobile.groups[1].spinLeft(delta);
+    if(keys[68]) mobile.groups[1].spinLeft(delta);
+    if(keys[90]) mobile.groups[2].spinLeft(delta);
+    if(keys[67]) mobile.groups[2].spinRight(delta);
 }
 
 
