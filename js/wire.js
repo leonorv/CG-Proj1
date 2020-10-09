@@ -41,16 +41,29 @@ class Group {
             this.wires[dep[0]].add(this.wires[dep[1]]));
     }
 
-    spinLeft() {
+    spinLeft(delta) {
         this.wires[0].rotation.y -= 50*delta*(Math.PI / 180);
     }
 
-    spinRight() {
-        this.wires[0].rotateY(-0.1);
+    spinRight(delta) {
+        this.wires[0].rotation.y += 50*delta*(Math.PI / 180);
+        //this.wires[0].rotateY(-0.1);
     }
 
-    move() {
-        this.wires[0].position.x+=0.1;
+    moveRight(delta) {
+        this.wires[0].position.x += 10*delta;
+    }
+
+    moveLeft(delta) {
+        this.wires[0].position.x -= 10*delta;
+    }
+
+    moveForward(delta) {
+        this.wires[0].position.z -= 10*delta;
+    }
+
+    moveBackward(delta) {
+        this.wires[0].position.z += 10*delta;
     }
 
 }

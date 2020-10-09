@@ -22,7 +22,12 @@ var keys = {
     50: false, //2
     51: false, //3
     52: false, //4
-    69: false //e
+    69: false, //e
+    37: false, //left
+    38: false, //top
+    39: false, //right
+    40: false, //bottom
+
 }
 
 function createLight(y) {
@@ -189,10 +194,6 @@ function onKeyDown(e) {
                     node.visible = !node.visible;
             })
             break;
-        case 37:
-        case 38:
-        case 39:
-        case 40:
 
     }
 }
@@ -208,6 +209,23 @@ function render() {
     delta = clock.getDelta();
     keyPressed(delta);
     renderer.render(scene, camera);
+}
+
+function keyPressed(delta) {
+
+    if(keys[81]) mobile.groups[0].spinLeft(delta);
+    if(keys[87]) mobile.groups[0].spinRight(delta);
+    if(keys[65]) mobile.groups[1].spinLeft(delta);
+    if(keys[68]) mobile.groups[1].spinRight(delta);
+    if(keys[90]) mobile.groups[2].spinLeft(delta);
+    if(keys[67]) mobile.groups[2].spinRight(delta);
+
+    if(keys[37]) mobile.groups[0].moveLeft(delta);
+    if(keys[38]) mobile.groups[0].moveForward(delta);
+    if(keys[39]) mobile.groups[0].moveRight(delta);
+    if(keys[40]) mobile.groups[0].moveBackward(delta);
+
+
 }
 
 function init() {
@@ -241,14 +259,5 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-function keyPressed(delta) {
-
-    if(keys[81]) mobile.groups[0].spinLeft(delta);
-    if(keys[87]) mobile.groups[0].spinRight(delta);
-    if(keys[65]) mobile.groups[1].spinLeft(delta);
-    if(keys[68]) mobile.groups[1].spinLeft(delta);
-    if(keys[90]) mobile.groups[2].spinLeft(delta);
-    if(keys[67]) mobile.groups[2].spinRight(delta);
-}
 
 
