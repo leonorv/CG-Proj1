@@ -50,29 +50,32 @@ function createScene() {
     grandson = new Group();
 
     father.addWire(new Wire(0, 10*un, 0, 3*un, 0, 0, 0, scene));
-    father.addWire(new Wire(0, -3*un/2, 0, 4*un, Math.PI/2, 0, 0, scene));
-    father.addWire(new Wire(0, -2*un, un, 2*un, -Math.PI/2, 0, 0, scene));
-    father.addWire(new Wire(0, -un, 0, 2*un, -Math.PI/2, 0, Math.PI/2, scene));
-    father.addWire(new Wire(0, -un, -un/2, un, -Math.PI/2, 0, 0, scene));
-    father.addWire(new Wire(0, un, -un/2, un, -Math.PI/2, 0, 0, scene));
+    father.addWire(new Wire(0, -3*un/2, 0, 10*un, Math.PI/2, 0, 0, scene));
+    father.addWire(new Wire(0, -5*un, un, 2*un, -Math.PI/2, 0, 0, scene));
+    father.addWire(new Wire(0, -(5/2+3/Math.sqrt(32))*un, -un/2, 3/2*un, Math.PI/4, 0, 0, scene));
+    father.addWire(new Wire(0, (5+3/Math.sqrt(32))*un, -un/2, 3/2*un, -Math.PI/4, 0, 0, scene));
+    father.addWire(new Wire(0, -un, 0, 3*un, -Math.PI/2, 0, Math.PI/2, scene));
+    father.addWire(new Wire(un/2, 0, un/2, 3/2*un, 0, -Math.PI/4, -Math.PI/2, scene));
+    father.addWire(new Wire(0, -3/2*un, -3/4*un, 3/2*un, -Math.PI/2, 0, 0, scene));
+    father.addWire(new Wire(0, 3/2*un, -un/2, un, -Math.PI/2, 0, 0, scene));
 
-    father.addDependencies([[0,1],[1,2], [2,3], [3,4], [3,5]]);
+    father.addDependencies([[0,1], [1,2], [1,3], [1,4], [2,5], [5,6], [5,7], [5,8]]);
     mobile.addGroup(father);
 
-    son.addWire(new Wire(0, 2*un, un, 2*un, -Math.PI/2, 0, 0, scene));
-    son.addWire(new Wire(0, -un, 0, 4*un, Math.PI/2, 0, Math.PI/2, scene));
-    son.addWire(new Wire(0, 2*un, un, 2*un, -Math.PI/2, 0, 0, scene));
-    son.addWire(new Wire(0, 0, 2*un, 6*un, -Math.PI/2, 0, 0, scene));
-    son.addDependencies([[0,1],[1,2],[1,3]]);
+    son.addWire(new Wire(0, 5/2*un, un, 2*un, -Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, -un, un, 6*un, Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, 3*un, un, 2*un, -Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, 0, 3*un, 6*un, -Math.PI/2, 0, 0, scene));
+    son.addWire(new Wire(0, -3*un, un, 2*un, Math.PI/2, 0, 0, scene));
+    son.addDependencies([[0,1],[1,2],[1,3], [1,4]]);
+    
     mobile.addGroup(son);
-
     mobile.groups[0].wires[1].add(mobile.groups[1].wires[0]);
 
-
-    grandson.addWire(new Wire(0, -2*un, un, 2*un, Math.PI/2, 0, 0, scene));
-    grandson.addWire(new Wire(0, un, 0, un, -Math.PI/2, 0, 0, scene));
-    grandson.addWire(new Wire(0, -un/2, un/2, un, -Math.PI/2, 0, 0, scene));
-    grandson.addWire(new Wire(0, un/2, un/2, un, -Math.PI/2, 0, 0, scene));
+    grandson.addWire(new Wire(0, 3*un, un, 2*un, Math.PI/2, 0, 0, scene));
+    grandson.addWire(new Wire(0, un, 0, 3*un, -Math.PI/2, 0, 0, scene));
+    grandson.addWire(new Wire(0, -3/2*un, un/2, un, -Math.PI/2, 0, 0, scene));
+    grandson.addWire(new Wire(0, 3/2*un, un/2, un, -Math.PI/2, 0, 0, scene));
     grandson.addDependencies([[0,1], [1,2], [1,3]]);
 
     mobile.addGroup(grandson);
@@ -80,23 +83,32 @@ function createScene() {
 
     //LAMPS
 
-    var cube1 = createLight(-un);
-    father.wires[4].add(cube1);
+    var solid1 = new Solid(new THREE.CylinderGeometry(4, 4, 12, 30), -3/2*un);
+    father.wires[7].add(solid1);
 
-    var cube2 = createLight(-un);
-    father.wires[5].add(cube2);
+    var solid2 = new Solid(new THREE.CylinderGeometry(2, 2, 10, 30), -un);
+    father.wires[8].add(solid2);
 
-    var cube3 = createLight(un);
-    son.wires[2].add(cube3);
+    var solid3 = new Solid(new THREE.CubeGeometry(5, 5, 5), un);
+    father.wires[3].add(solid3);
 
-    var cube4 = createLight(3*un);
-    son.wires[3].add(cube4);
+    var solid4 = new Solid(new THREE.CubeGeometry(5, 5, 5), -un);
+    father.wires[6].add(solid4);
 
-    var cube5 = createLight(un);
-    grandson.wires[2].add(cube5);
+    var solid5 = new Solid(new THREE.CylinderGeometry(3, 3, 7, 30), -un);
+    father.wires[4].add(solid5);
 
-    var cube6 = createLight(un);
-    grandson.wires[3].add(cube6);
+    var solid6 = new Solid(new THREE.CylinderGeometry(6, 6, 5, 30), 3*un);
+    son.wires[3].add(solid6);
+
+    var solid7 = new Solid(new THREE.CylinderGeometry(8, 8, 6, 30), -un);
+    son.wires[4].add(solid7);
+
+    var solid8 = new Solid(new THREE.CubeGeometry(5, 5, 5), un);
+    grandson.wires[2].add(solid8);
+
+    var solid9 = new Solid(new THREE.CubeGeometry(8, 8, 8), un);
+    grandson.wires[3].add(solid9);
 }
 
 function createCamera() {
