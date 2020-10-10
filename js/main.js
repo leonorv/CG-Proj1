@@ -78,7 +78,7 @@ function createScene() {
     grandson.addWire(new Wire(0, un, 0, 3*un, -Math.PI/2, 0, 0, scene));
     grandson.addWire(new Wire(0, -3/2*un, un/2, un, -Math.PI/2, 0, 0, scene));
     grandson.addWire(new Wire(0, 3/2*un, un/2, un, -Math.PI/2, 0, 0, scene));
-    grandson.addWire(new Wire(un, un, 0, un, 0, 0, -Math.PI/2, scene));
+    grandson.addWire(new Wire(un, un, 0, 2*un, 0, 0, -Math.PI/2, scene));
     grandson.addDependencies([[0,1], [1,2], [1,3],[0,4]]);
 
     mobile.addGroup(grandson);
