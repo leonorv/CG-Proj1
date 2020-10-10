@@ -1,7 +1,7 @@
 /*global THREE, requestAnimationFrame, console*/
 var camera, scene, renderer;
 
-var light;
+var light, clock, delta;
 var SCREEN_WIDTH = window.innerWidth;
 var SCREEN_HEIGHT = window.innerHeight;
 var aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
@@ -22,7 +22,12 @@ var keys = {
     50: false, //2
     51: false, //3
     52: false, //4
-    69: false //e
+    69: false, //e
+    37: false, //left
+    38: false, //top
+    39: false, //right
+    40: false, //bottom
+
 }
 
 function createLight(y) {
@@ -161,7 +166,7 @@ function onResize() {
     camera.left = - 0.5 * frustumSize * aspect / 2;
     camera.right = 0.5 * frustumSize * aspect / 2;
     camera.top = 0.5 * frustumSize / 2;
-    camera.bottom = -0.5*  frustumSize / 2;
+    camera.bottom = - 0.5 *  frustumSize / 2;
     camera.updateProjectionMatrix();
 
 }
@@ -169,31 +174,58 @@ function onResize() {
 function onKeyDown(e) {
     'use strict';
     keys[e.keyCode] = true;
-    if (keys[81]) mobile.groups[0].spinLeft();          //q - spin 1st branch left
-    else if (keys[87]) mobile.groups[0].spinRight();    //w - spin 1st branch right
-    if (keys[65]) mobile.groups[1].spinLeft();          //a - spin 2nd branch left
-    else if (keys[68]) mobile.groups[1].spinRight();    //d - spin 2nd branch right
-    if (keys[90]) mobile.groups[2].spinLeft();          //z - spin 3rd branch left
-    else if(keys[67]) mobile.groups[2].spinRight();     //c - spin 3rd branch right
-    if (keys[49]) camera = cameraFront;                 //1 - front view
-    if (keys[50]) camera = cameraTop;                   //2 - top view
-    if (keys[51]) camera = cameraSide;
-    if (keys[69]) {                                     //e - remove axis just for help
-        scene.traverse(function (node) {
-            if (node instanceof THREE.AxisHelper) {
-                node.visible = !node.visible;
-            }
-        });
+
+    switch(e.keyCode) {
+        case 49:
+            camera = cameraFront;                 //1 - front view
+            onResize();
+            break;
+        case 50:
+            camera = cameraTop;
+            onResize();
+            break;
+        case 51:
+            camera = cameraSide;
+            onResize();
+            break;
+        case 69:
+            scene.traverse(function (node) {
+                if (node instanceof THREE.AxisHelper)
+                    node.visible = !node.visible;
+            })
+            break;
+
     }
 }
 
 function onKeyUp(e) {
+    'use strict';
     keys[e.keyCode] = false;
 }
 
 function render() {
     'use strict';
+
+    delta = clock.getDelta();
+    keyPressed(delta);
     renderer.render(scene, camera);
+}
+
+function keyPressed(delta) {
+
+    if(keys[81]) mobile.groups[0].spinLeft(delta);
+    if(keys[87]) mobile.groups[0].spinRight(delta);
+    if(keys[65]) mobile.groups[1].spinLeft(delta);
+    if(keys[68]) mobile.groups[1].spinRight(delta);
+    if(keys[90]) mobile.groups[2].spinLeft(delta);
+    if(keys[67]) mobile.groups[2].spinRight(delta);
+
+    if(keys[37]) mobile.groups[0].moveLeft(delta);
+    if(keys[38]) mobile.groups[0].moveForward(delta);
+    if(keys[39]) mobile.groups[0].moveRight(delta);
+    if(keys[40]) mobile.groups[0].moveBackward(delta);
+
+
 }
 
 function init() {
@@ -205,6 +237,9 @@ function init() {
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
+
+    clock = new THREE.Clock();
+    clock.start();
 
     createScene();
     createCamera();
@@ -223,5 +258,6 @@ function animate() {
 
     requestAnimationFrame(animate);
 }
+
 
 
