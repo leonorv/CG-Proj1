@@ -7,7 +7,7 @@ var SCREEN_HEIGHT = window.innerHeight;
 var aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
 var cameraOrthoHelper;
 var cameraFront, cameraTop, cameraSide;
-var frustumSize = 150;
+var frustumSize = 220;
 var un = 5;
 var mobile, father, son, grandson;
 
@@ -27,17 +27,6 @@ var keys = {
     38: false, //top
     39: false, //right
     40: false, //bottom
-
-}
-
-function createLight(y) {
-    'use strict';
-    var lamp = new THREE.CubeGeometry(5,5,5);
-    light = new THREE.PointLight( 0xCA1400, 2.5, 100, 2);
-    light.add(new THREE.Mesh(lamp, new THREE.MeshLambertMaterial( {color: 0xCA1400 , emissive: 0xCA1400, emissiveIntensity: 1.5})));
-    light.position.set(0,-y,0);
-    scene.add(light); 
-    return light;
 }
 
 function createScene() {
@@ -46,8 +35,7 @@ function createScene() {
     scene = new THREE.Scene();
     scene.add(new THREE.AxisHelper(10));
 
-    var light1 = new THREE.AmbientLight( 0x404040 ); // soft white light
-    scene.add(light1);
+    scene.add(new THREE.AmbientLight(0x404040)); //soft ambient light
 
     mobile = new Mobile();
     father = new Group();
@@ -90,49 +78,26 @@ function createScene() {
     mobile.groups[1].wires[1].add(mobile.groups[2].wires[0]);
 
     //LAMPS
-
-    var solid1 = new Solid(new THREE.CylinderGeometry(4, 4, 12, 30), -3/2*un);
-    father.wires[7].add(solid1);
-
-    var solid2 = new Solid(new THREE.CylinderGeometry(2, 2, 10, 30), -un);
-    father.wires[8].add(solid2);
-
-    var solid3 = new Solid(new THREE.CubeGeometry(5, 5, 5), un);
-    father.wires[3].add(solid3);
-
-    var solid4 = new Solid(new THREE.CubeGeometry(5, 5, 5), -un);
-    father.wires[6].add(solid4);
-
-    var solid5 = new Solid(new THREE.CylinderGeometry(3, 3, 7, 30), -un);
-    father.wires[4].add(solid5);
-
-    var solid6 = new Solid(new THREE.CylinderGeometry(6, 6, 5, 30), 3*un);
-    son.wires[3].add(solid6);
-
-    var solid7 = new Solid(new THREE.CylinderGeometry(8, 8, 6, 30), -un);
-    son.wires[4].add(solid7);
-
-    var solid8 = new Solid(new THREE.CubeGeometry(5, 5, 5), un);
-    grandson.wires[2].add(solid8);
-
-    var solid9 = new Solid(new THREE.CubeGeometry(8, 8, 8), un);
-    grandson.wires[3].add(solid9);
-
-    var solid10 = new Solid(new THREE.CylinderGeometry(3, 3, 7, 30), -un);
-    grandson.wires[4].add(solid10);
-
-    var solid11 = new Solid(new THREE.CylinderGeometry(3, 3, 7, 30), -un);
-    son.wires[5].add(solid11);
-
-    var solid12 = new Solid(new THREE.CylinderGeometry(3, 3, 7, 30), -un);
-    son.wires[6].add(solid12);
+    father.wires[7].addCylinderLamp(3/2*un, 4, 4, 12, 30);
+    father.wires[8].addCylinderLamp(un, 2, 2, 10, 30);
+    father.wires[3].addCubeLamp(-un, 5, 5, 5);
+    father.wires[6].addCubeLamp(un, 5, 5, 5);
+    father.wires[4].addCylinderLamp(un, 3, 3, 7, 30);
+    son.wires[3].addCylinderLamp(-3*un, 6, 6, 5, 30);
+    son.wires[4].addCylinderLamp(un, 8, 8, 6, 30);
+    son.wires[5].addCylinderLamp(un, 3, 3, 7, 30);
+    son.wires[6].addCylinderLamp(un, 3, 3, 7, 30);
+    grandson.wires[2].addCubeLamp(-un, 5, 5, 5);
+    grandson.wires[3].addCubeLamp(-un, 8, 8, 8);
+    grandson.wires[4].addCylinderLamp(un, 3, 3, 7, 30);
 }
 
 function createCamera() {
     'use strict';
     /*FRONT CAMERA*/
     cameraFront = new THREE.OrthographicCamera( 0.5 * frustumSize * aspect / - 2, 0.5 * frustumSize * aspect / 2, 0.5* frustumSize / 2, 0.5 * frustumSize / - 2, 2, 2000 );
-    cameraFront.position.set(0,20,20);
+    cameraFront.position.set(0,0,-50);
+    cameraFront.lookAt(scene.position);
     scene.add(cameraFront);
 
     /*TOP CAMERA*/
@@ -143,15 +108,11 @@ function createCamera() {
 
     /*SIDE CAMERA*/
     cameraSide = new THREE.OrthographicCamera( 0.5 * frustumSize * aspect / - 2, 0.5 * frustumSize * aspect / 2, 0.5* frustumSize / 2, 0.5 * frustumSize / - 2, 2, 2000 );
-    cameraSide.position.set(frustumSize,-frustumSize,frustumSize);
+    cameraSide.position.set(50,0,0);
     cameraSide.lookAt(scene.position);
     scene.add(cameraSide);
 
     camera = cameraFront;
-
-    cameraOrthoHelper = new THREE.CameraHelper(camera);
-    cameraOrthoHelper.visible = true;
-    //scene.add( cameraOrthoHelper );
 }
 
 function onResize() {
@@ -168,7 +129,6 @@ function onResize() {
     camera.top = 0.5 * frustumSize / 2;
     camera.bottom = - 0.5 *  frustumSize / 2;
     camera.updateProjectionMatrix();
-
 }
 
 function onKeyDown(e) {
@@ -177,7 +137,7 @@ function onKeyDown(e) {
 
     switch(e.keyCode) {
         case 49:
-            camera = cameraFront;                 //1 - front view
+            camera = cameraFront;         
             onResize();
             break;
         case 50:
@@ -188,13 +148,14 @@ function onKeyDown(e) {
             camera = cameraSide;
             onResize();
             break;
+        case 52:
+            mobile.changeWireframe();
         case 69:
             scene.traverse(function (node) {
                 if (node instanceof THREE.AxisHelper)
                     node.visible = !node.visible;
             })
             break;
-
     }
 }
 
@@ -205,14 +166,12 @@ function onKeyUp(e) {
 
 function render() {
     'use strict';
-
     delta = clock.getDelta();
     keyPressed(delta);
     renderer.render(scene, camera);
 }
 
 function keyPressed(delta) {
-
     if(keys[81]) mobile.groups[0].spinLeft(delta);
     if(keys[87]) mobile.groups[0].spinRight(delta);
     if(keys[65]) mobile.groups[1].spinLeft(delta);
@@ -224,8 +183,6 @@ function keyPressed(delta) {
     if(keys[38]) mobile.groups[0].moveForward(delta);
     if(keys[39]) mobile.groups[0].moveRight(delta);
     if(keys[40]) mobile.groups[0].moveBackward(delta);
-
-
 }
 
 function init() {
@@ -233,7 +190,6 @@ function init() {
     renderer = new THREE.WebGLRenderer({
         antialias: true
     });
-
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -253,11 +209,6 @@ function init() {
 
 function animate() {
     'use strict';
-
     render();
-
     requestAnimationFrame(animate);
 }
-
-
-
