@@ -3,7 +3,7 @@ class Wire extends THREE.Object3D {
         'use strict';
         super();
 
-        this.material = new THREE.MeshPhongMaterial({ color: 0xB5B5B0});
+        this.material = new THREE.MeshPhongMaterial({ color: 0xB5B5B0, wireframe: false});
         this.geometry = new THREE.CylinderGeometry(0.4, 0.4, h, 5);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.add(this.mesh);
@@ -11,18 +11,45 @@ class Wire extends THREE.Object3D {
         this.rotateX(angleX);
         this.rotateY(angleY);
         this.rotateZ(angleZ);
+        this.solid;
         scene.add(this);
+    }
+
+    addCylinderLamp(y, radiusTop, radiusBottom, height, radialSegments) {
+        var solid = new Solid(new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radialSegments));
+        var lamp = new Lamp(solid, -y);
+        this.solid = solid;
+        this.add(lamp);
+    }
+
+    addCubeLamp(light_pos, x, y, z) {
+        var solid = new Solid(new THREE.CubeGeometry(x, y, z));
+        var lamp = new Lamp(solid, -light_pos);
+        this.solid = solid;
+        this.add(lamp);
+    }
+
+    changeWireframe() {
+        this.material.wireframe = !this.material.wireframe;
+        if (this.solid) this.solid.material.wireframe = !this.solid.material.wireframe;
     }
 }
 
 class Solid extends THREE.Object3D {
-    constructor(solid, y) {
+    constructor(geometry) {
         'use strict';
-        light = new THREE.PointLight( 0xCA1400, 2.5, 100, 2);
-        light.add(new THREE.Mesh(solid, new THREE.MeshLambertMaterial( {color: 0xCA1400 , emissive: 0xCA1400, emissiveIntensity: 1.5})));
-        light.position.set(0,-y,0);
-        scene.add(light); 
-        return light;
+        super();
+        this.material = new THREE.MeshLambertMaterial({color: 0xCA1400 , emissive: 0xCA1400, emissiveIntensity: 1.5, wireframe: false});
+        this.mesh = new THREE.Mesh(geometry, this.material);
+    }
+}
+
+class Lamp extends THREE.PointLight {
+    constructor(solid, y) {
+        super(0xCA1400, 2.5, 100, 2);
+        this.position.set(0, -y, 0);
+        this.add(solid.mesh);
+        scene.add(this);
     }
 }
 
@@ -47,11 +74,11 @@ class Group {
 
     spinRight(delta) {
         this.wires[0].rotation.y += 50*delta*(Math.PI / 180);
-        //this.wires[0].rotateY(-0.1);
     }
 
     moveRight(delta) {
         this.wires[0].position.x += 10*delta;
+
     }
 
     moveLeft(delta) {
@@ -64,6 +91,10 @@ class Group {
 
     moveBackward(delta) {
         this.wires[0].position.z += 10*delta;
+    }
+
+    changeWireframe() {
+        this.wires.forEach(wire => wire.changeWireframe());
     }
 
 }
