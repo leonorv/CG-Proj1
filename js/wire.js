@@ -63,7 +63,7 @@ class Solid extends THREE.Object3D {
     constructor(geometry, height) {
         'use strict';
         super();
-        this.material = new THREE.MeshLambertMaterial({color: 0xCA1400 , emissive: 0xCA1400, emissiveIntensity: 1.5, wireframe: false});
+        this.material = new THREE.MeshLambertMaterial({color: 0xB80109, emissive: 0xB80109, emissiveIntensity: 1.0, wireframe: false});
         this.mesh = new THREE.Mesh(geometry, this.material);
         this.height =  height;
     }

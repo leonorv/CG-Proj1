@@ -36,9 +36,8 @@ function addLamps() {
     father.wires[4].addCylinderLamp(3, 3, 7, 30);
     son.wires[3].addCylinderLamp(6, 6, 5, 30);
     son.wires[2].addCylinderLamp(8, 8, 6, 30);
-    son.wires[5].addCylinderLamp(3, 3, 7, 30);
-    son.wires[6].addCylinderLamp(3, 3, 7, 30);
-    son.wires[7].addCylinderLamp(2, 2, 5, 30);
+    son.wires[4].addCylinderLamp(3, 3, 7, 30);
+    son.wires[6].addCylinderLamp(2, 2, 5, 30);
     grandson.wires[2].addCubeLamp(8, 8, 8);
     grandson.wires[3].addCubeLamp(5, 5, 5);
     grandson.wires[4].addCylinderLamp(3, 3, 7, 30);
@@ -87,13 +86,11 @@ function createScene() {
     son.wires.push(new Wire(6*un, scene));
     son.addWire(1, 3, 0, 0, son.wires[3].h/2, -Math.PI/2, 0, 0);
     son.wires.push(new Wire(2*un, scene));
-    son.addWire(1, 4, 0, son.wires[1].h/2, son.wires[4].h/2, Math.PI/2, 0, 0);
-    son.wires.push(new Wire(2*un, scene));
-    son.addWire(0, 5, -son.wires[0].h/2, -son.wires[0].h/2, 0, 0, 0, -Math.PI/2);
+    son.addWire(0, 4, -son.wires[4].h/2, -son.wires[0].h/2, 0, 0, 0, -Math.PI/2);
     son.wires.push(new Wire(un, scene));
-    son.addWire(1, 6, 0, (son.wires[1]/2+Math.sqrt(2)/4)*son.wires[6].h, -(Math.sqrt(2)/4)*son.wires[6].h, -Math.PI/4, 0, 0);
+    son.addWire(1, 5, 0, (son.wires[1]/2+Math.sqrt(2)/4)*son.wires[5].h, -(Math.sqrt(2)/4)*son.wires[5].h, -Math.PI/4, 0, 0);
     son.wires.push(new Wire(un, scene));
-    son.addWire(1, 7, 0, ((Math.sqrt(2)/4)*son.wires[7].h + son.wires[1].h/2), -((Math.sqrt(2)/4)*son.wires[7].h), Math.PI/2, Math.PI/2, Math.PI/4);
+    son.addWire(1, 6, 0, ((Math.sqrt(2)/4)*son.wires[6].h + son.wires[1].h/2), -((Math.sqrt(2)/4)*son.wires[6].h), Math.PI/2, Math.PI/2, Math.PI/4);
     
     mobile.addGroup(son);
     mobile.groups[0].wires[1].add(mobile.groups[1].wires[0]);
